@@ -17,10 +17,23 @@ Running the benchmarks requires the git submodules to be initialized:
     git submodule update --init
 ```
 
-The benchmarks can be run inside a [Docker](https://www.docker.com/) container. First, build the Docker
+The benchmarks can be run inside a [Docker](https://www.docker.com/) container. First, build the Docker:
 
 ```bash
-    docker build .
+    docker build . -t sabre_artifact
+```
+
+Then, run the container, mounting a local `results` directory to store the results:
+
+```bash
+    docker run -it --mount type=bind,source=./results,target=/root/results sabre_artifact
+```
+
+```bash
+    python3 /root/scripts/run_mcrl2.py /root/mCRL2/build/stage/bin/ jitty /root/REC/mcrl2/ /root/results/
+    python3 /root/scripts/run_mcrl2.py /root/mCRL2/build/stage/bin/ jittyc /root/REC/mcrl2/ /root/results/
+    python3 /root/scripts/run_merc.py /root/merc/target/release/ innermost /root/REC/rec/ /root/results/
+    python3 /root/scripts/run_merc.py /root/merc/target/release/ sabre /root/REC/rec/ /root/results/
 ```
 
 ## Results

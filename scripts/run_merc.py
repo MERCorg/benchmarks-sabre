@@ -1,13 +1,19 @@
+#!/usr/bin/env python3
+
 import argparse
 import json
 import os
 import re
 import shutil
 import subprocess
+import sys
+
 from pathlib import Path
 from statistics import mean
 
-#!/usr/bin/env python3
+# make parent directory importable so we can import MERCpy as a module
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from MERCpy import run_process
 
 class Rewriter:
     INNERMOST = "innermost"
