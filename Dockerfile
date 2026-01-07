@@ -39,13 +39,11 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 RUN cd ~/merc/ \
     && cargo build --release -j${THREADS} --bin merc-rewrite
 
+RUN mkdir /root/results/
+
 # Copy the scripts into the container
+COPY ./MERCpy /root/MERCpy/
 COPY ./scripts /root/scripts/
 
 # Copy the REC specifications, they are already in the container, but this is more convenient
 COPY ./merc/examples/REC/ /root/REC/
-
-RUN python3 /root/scripts/run_mcrl2.py /root/mCRL2/build/stage/bin/ jitty /root/REC/mcrl2/ /root/results/
-RUN python3 /root/scripts/run_mcrl2.py /root/mCRL2/build/stage/bin/ jittyc /root/REC/mcrl2/ /root/results/
-RUN python3 /root/scripts/run_merc.py /root/merc/target/release/ innermost /root/REC/rec/ /root/results/
-RUN python3 /root/scripts/run_merc.py /root/merc/target/release/ sabre /root/REC/rec/ /root/results/
