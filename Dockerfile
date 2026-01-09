@@ -42,7 +42,7 @@ RUN cd ~/merc/ \
 RUN mkdir /root/results/
 
 # Copy the scripts into the container
-COPY ./MERCpy /root/MERCpy/
+COPY ./merc-py /root/merc-py/
 COPY ./scripts /root/scripts/
 
 # Copy the REC specifications, they are already in the container, but this is more convenient

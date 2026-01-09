@@ -12,8 +12,8 @@ from pathlib import Path
 from statistics import mean
 
 # make parent directory importable so we can import MERCpy as a module
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from MERCpy import RunProcess, MercLogger
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "merc-py"))
+from merc import RunProcess, MercLogger
 
 
 class Rewriter:
@@ -54,13 +54,14 @@ def benchmark(
                     proc = RunProcess(
                         merc_rewrite_bin,
                         ["rewrite", str(rewriter), str(file)],
+                        read_stdout=logger.info,
                         max_time=600,
                     )
                 except Exception as e:
                     logger.error(f"Benchmark {file} timed out or crashed: {e}")
                     break
 
-                output_lines = proc.stdout.splitlines() + proc.stderr.splitlines()
+                output_lines = proc.stdout.splitlines()
                 for line in output_lines:
                     logger.info(line)
 
@@ -71,6 +72,7 @@ def benchmark(
 
             json.dump(results, result_file)
             result_file.write("\n")
+            result_file.flush()
 
 
 def main() -> None:
