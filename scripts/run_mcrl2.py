@@ -64,7 +64,7 @@ def benchmark(
             }
 
             for _ in range(5):
-                stdout_capture = ParserOutput(logger)
+                parser = ParserOutput(logger)
 
                 try:
                     RunProcess(
@@ -76,7 +76,7 @@ def benchmark(
                             str(file),
                             str(expressions),
                         ],
-                        read_stdout=stdout_capture,
+                        read_stdout=parser,
                         max_time=600,
                     )
                 except Exception as e:
@@ -84,7 +84,7 @@ def benchmark(
                     break
 
                 # Extract timings from the capture object instead of proc.stdout
-                results["timings"].extend(stdout_capture.timings)
+                results["timings"].extend(parser.timings)
 
             print(results)
 

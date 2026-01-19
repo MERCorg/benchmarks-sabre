@@ -8,12 +8,12 @@ RUN apt-get update && apt-get install -y \
  cmake \
  git \
  libboost-dev \
- python3 \
- python3-pip \
- python3-psutil \ 
  z3 \
-# Requires to install Rust
- curl
+ # Required to install Rust
+ curl \
+ # Requires for the Python scripts
+ python3 \
+ python3.12-venv
  
 # Build the mcrl22lps and lps2lts tools of mCRL2 from source
 COPY ./mCRL2 /root/mCRL2/
@@ -38,3 +38,12 @@ ARG THREADS=8
 ENV PATH="/root/.cargo/bin:${PATH}"
 RUN cd ~/merc/ \
     && cargo build --release -j${THREADS} --bin merc-rewrite
+    
+# Install merc-py module, and create a virtual environment
+COPY merc-py /root/merc-py/
+
+RUN python3 -m venv /root/.venv && /root/.venv/bin/pip install /root/merc-py
+
+# Copy the scripts to ensure that these are fixed.
+COPY scripts /root/scripts/
+
