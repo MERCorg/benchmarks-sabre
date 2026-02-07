@@ -63,24 +63,28 @@ def benchmark(
                 "experiment": os.path.basename(file),
                 "rewriter": rewriter,
                 "timings": [],
+                "memory_usage": [],
             }
 
             for _ in range(5):
-                parser = ParserOutput(pattern, logger)
+                parser = ParserOutput(logger)
 
                 try:
-                    RunProcess(
+                    proc = RunProcess(
                         merc_rewrite_bin,
                         ["rewrite", str(rewriter), str(file)],
                         read_stdout=parser,
                         max_time=600,
                     )
+
+                    results["memory_usage"].append(proc.max_memory)
                 except Exception as e:
                     logger.error(f"Benchmark {file} timed out or crashed: {e}")
                     break
 
                 results["timings"].extend(parser.timings)
 
+            print(results)
             json.dump(results, result_file)
             result_file.write("\n")
             result_file.flush()

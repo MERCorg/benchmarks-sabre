@@ -61,13 +61,14 @@ def benchmark(
                 "experiment": os.path.basename(file),
                 "rewriter": rewriter,
                 "timings": [],
+                "memory_usage": [],
             }
 
             for _ in range(5):
                 parser = ParserOutput(logger)
 
                 try:
-                    RunProcess(
+                    proc = RunProcess(
                         mcrl2rewrite_bin,
                         [
                             "-v",
@@ -79,6 +80,8 @@ def benchmark(
                         read_stdout=parser,
                         max_time=600,
                     )
+
+                    results["memory_usage"].append(proc.max_memory)
                 except Exception as e:
                     logger.error(f"Benchmark {file} timed out or crashed: {e}")
                     break
