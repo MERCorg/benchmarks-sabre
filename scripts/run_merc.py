@@ -15,6 +15,7 @@ from statistics import mean
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "merc-py"))
 from merc import RunProcess, MercLogger
 
+PATTERN = re.compile(r"Time rewrite_rec: ([0-9]+(?:\.[0-9]+)?)s")
 
 class Rewriter:
     INNERMOST = "innermost"
@@ -23,18 +24,17 @@ class Rewriter:
 class ParserOutput:
     """Callable class that captures stdout and extracts timing information."""
 
-    def __init__(self, pattern, logger: MercLogger):
+    def __init__(self, logger: MercLogger):
         self.logger = logger
         self.timings = []
-        self.pattern = pattern
 
     def __call__(self, line: str) -> None:
         """Called for each line of stdout."""
         self.logger.info(line)
 
-        m = self.pattern.search(line)
+        m = PATTERN.search(line)
         if m:
-            ms = float(m.group(1))
+            ms = float(m.group(1)) * 1000  # Convert seconds to milliseconds
             self.timings.append(ms)
 
 def benchmark(
@@ -47,11 +47,6 @@ def benchmark(
     if merc_rewrite_bin is None:
         raise RuntimeError("Cannot find merc-rewrite")
 
-    pattern = (
-        re.compile(r"Innermost rewrite took ([0-9]+) ms")
-        if rewriter == Rewriter.INNERMOST
-        else re.compile(r"Sabre rewrite took ([0-9]+) ms")
-    )
 
     with open(
         os.path.join(output_dir, f"merc_{rewriter}_results.json"), "w", encoding="utf-8"
