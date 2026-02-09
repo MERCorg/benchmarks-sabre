@@ -62,7 +62,7 @@ def benchmark(
             }
 
             for _ in range(5):
-                parser = ParserOutput(pattern, logger)
+                parser = ParserOutput(logger)
 
                 try:
                     proc = RunProcess(
